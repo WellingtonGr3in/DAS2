@@ -1,4 +1,4 @@
-# ADR-XXX: [Azure SQL Database  ]
+# ADR-002: [Azure SQL Database  ]
 
 **Status:**  Aceito  **Data:** [2026-08-27]  |  **Autores:** [Wellington Grein]
 
