@@ -1,0 +1,59 @@
+name: Deploy Java project to Azure Function App
+
+on:
+  push:
+    branches: ["dev"]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_FUNCTIONAPP_NAME: 'azfunitsm'
+  POM_XML_DIRECTORY: '.'
+  DISTRIBUTION: 'microsoft'
+  JAVA_VERSION: '21'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
+
+      - name: Setup Java Sdk ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'maven' # Adicionado para acelerar builds futuros
+
+      # 1º PASSO: Compilar e gerar o pacote JAR
+      - name: 'Build Project with Maven'
+        shell: bash
+        run: |
+          pushd './${{ env.POM_XML_DIRECTORY }}'
+          mvn clean package
+          popd
+
+      # 2º PASSO: Login no Azure (Necessário apenas se NÃO usar Publish Profile)
+      # Se você usa Publish Profile, pode remover este bloco.
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # 3º PASSO: Deploy
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          # Para Java, o plugin do Azure no Maven geralmente cuida da estrutura
+          package: '${{ env.POM_XML_DIRECTORY }}'
+          # Se estiver usando segredos de Service Principal, remova a linha abaixo
+          # publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }} 
+          respect-pom-xml: true
