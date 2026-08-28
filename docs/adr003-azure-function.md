@@ -1,4 +1,4 @@
-# ADR-XXX: [Azure Functions ]
+# ADR-003: [Azure Functions ]
 
 **Status:**  Aceito  **Data:** [2026-08-27]  |  **Autores:** [Wellington Grein]
 
