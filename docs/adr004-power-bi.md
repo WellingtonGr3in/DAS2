@@ -1,4 +1,4 @@
-# ADR-XXX: [Power BI ]
+# ADR-004: [Power BI ]
 
 **Status:**  Aceito  **Data:** [2026-08-27]  |  **Autores:** [Wellington Grein]
 
